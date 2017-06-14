@@ -5,5 +5,4 @@ test
 *.ko
 Module.symvers
 modules.order
-*.tmp*
 *mod*
