@@ -165,6 +165,7 @@ int main (int argc, char *argv[])
 	{
 		char value[10];
 		float raw;
+		float temp;
 		bool lock = false;
 		int res;
 
@@ -188,17 +189,17 @@ int main (int argc, char *argv[])
 			if ( fgets(value, 10, ft) != NULL )
 			{
 				raw = atoi(value);
+				temp = (((raw / 4096) * 1800) - 500)/10;
 				if (is_silent)
 				{
-					logger (msg_app_flt_flt ("Raw: %f, sample count: %d", raw, sample_count));
+					logger (msg_app_flt3 ("Raw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count));
 				}
 				else
 				{
-					printf("\rRaw: %f, sample count: %d", raw, sample_count);
+					printf("\rRaw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count);
 					fflush(stdout);
 				}
-				//temp fix: if raw > 1780 then switch on led
-				if (raw > 1780)
+				if (temp > 25)
 				{
 					if (!lock)
 					{
