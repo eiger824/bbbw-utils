@@ -220,7 +220,7 @@ int main (int argc, char *argv[])
 				++sample_count;
 				fclose(ft);
 			}
-			usleep(1000000);
+			usleep(10 * 1000000);
 		}
 	}
 	return 0;
