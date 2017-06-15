@@ -5,7 +5,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <ctype.h>
 #include <time.h>
+#include <errno.h>
 
 #include "logger.h"
 #include "strutils.h"
@@ -29,11 +31,11 @@ void sig_handler(int signo)
 			int res;
 
 			res = write_2_file(value_path,"0");
-			(res == -1) ? perror("Error writing value") : 
+			(res == -1) ? logger (msg_err ("Error writing value", errno)) : 
 				logger ("Success! Led is OFF");
 
 			res = write_2_file(unexport_path, "49");
-			(res == -1) ? perror("Error unexporting led") :
+			(res == -1) ? logger (msg_err ("Error unexporting led", errno)) :
 				logger ("Success! Led 49 is unregistered");
 		}
 		else
@@ -57,27 +59,21 @@ void help()
 	printf("-h\tShow this help and exit\n");
 	printf("-l\t\"Listen\" mode, non-interactive\n");
 	printf("-t <m>\tToggle led state every m milliseconds\n");
-	printf("-s\tSilent mode (e.g. if running as daemon, logging to file\n");
+	printf("-s\tSilent mode (e.g. if running as daemon, logging to file)\n");
 }
 
 int main (int argc, char *argv[])
 {
-	//Privileges needed to access GPIO in sysfs
-	if (getuid() != 0)
-	{
-		logger ("Be sudo, my friend\n");
-		return 1;
-	}
-
 	char *c = malloc(1);
 	char *cvalue = NULL;
 	bool toggle = false;
 	int time = 1;	
 	int opt;	
+	bool is_silent = false;
 
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
 	{
-		printf("Warning, SIGINT won't be catched\n");
+		logger ("Warning, SIGINT won't be catched");
 	}
 
 	if (argc == 1)
@@ -101,10 +97,11 @@ int main (int argc, char *argv[])
 				return 0;
 			case 'l':
 				listen=true;
-				printf("Will listen to AIN1 Pin (P9_40)\n");                 
+				logger ("Will listen to AIN1 Pin (P9_40)"); 
 				break;
 			case 's':
 				set_silent(true);
+				is_silent = true;
 				break;
 			case 't':
 				memset(c,'1',1); //Start with ON state
@@ -114,11 +111,11 @@ int main (int argc, char *argv[])
 				break;
 			case '?':
 				if (optopt == 'c')
-					fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+					logger ( msg_app_int ("Option -%c requires an argument", optopt));
 				else if (isprint (optopt))
-					fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+					logger ( msg_app_int ("Unknown option `-%c'", optopt));
 				else
-					fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
+					logger ( msg_app_int ("Unknown option character `\\x%x'", optopt));
 				return 1;
 			default:
 				logger ("Unknown option");
@@ -126,29 +123,11 @@ int main (int argc, char *argv[])
 		}
 	}	
 
-	switch (argv[1][0])
+	//Privileges needed to access GPIO in sysfs
+	if (getuid() != 0)
 	{
-		case '1':
-			memset(c,'1',1);	
-			break;
-		case '0':
-			memset(c,'0',1);
-			break;
-		case 't':
-			//start with led ON
-			memset(c,'1',1);
-			toggle=true;
-			if (argc == 3) time = atoi(argv[2]);
-			printf("Will toggle every %f seconds\n", (float) time / 1000);
-			break;
-		case 'l':
-			listen = true;
-			printf("Will listen to AIN1 Pin (P9_40)\n");
-			break;
-		default:
-			printf("Wrong param \"%c\"\n",argv[1][0]);
-			help();
-			return -1;
+		logger ("Be sudo, my friend");
+		return 1;
 	}
 
 	int res;
@@ -157,11 +136,11 @@ int main (int argc, char *argv[])
 	{
 		//setup functions
 		res = write_2_file(export_path, "49");
-		(res == -1) ? perror("Error exporting") :
-			printf("Exported our led: %s\n", export_path);
+		(res == -1) ? logger (msg_err ("Error exporting", errno)) :
+			logger (msg_app_str("Exported our led: %s", export_path));
 		res = write_2_file(direction_path, "out");
-		(res == -1) ? perror("Error setting direction") :
-			printf("Set direction: %s\n", direction_path);
+		(res == -1) ? logger ( msg_err ("Error setting direction", errno)) :
+			logger ( msg_app_str ("Set direction: %s", direction_path));
 
 		if (toggle)
 		{
@@ -170,16 +149,16 @@ int main (int argc, char *argv[])
 				if (!strcmp(c,"1")) memset(c,'0',1);
 				else memset(c,'1',1);
 				write_2_file(value_path, c);
-				(res == -1) ? perror("Error writing value") :
-					printf("Success! (%s)\n", (!strcmp(c,"1")) ? "ON" : "OFF");
+				(res == -1) ? logger ( msg_err ("Error writing value", errno)) :
+					logger ( msg_app_str ("Success! (%s)", (!strcmp(c,"1")) ? "ON" : "OFF"));
 				usleep(time * 1000);
 			}
 		}
 		else
 		{
 			write_2_file(value_path, c);
-			(res == -1) ? perror("Error writing value") :
-				printf("Success! (%s)\n", (!strcmp(c,"1")) ? "ON" : "OFF");
+			(res == -1) ? logger ( msg_err ("Error writing value", errno)) :
+				logger ( msg_app_str("Success! (%s)", (!strcmp(c,"1")) ? "ON" : "OFF"));
 		}	
 	}
 	else // Read temperature values
@@ -192,18 +171,18 @@ int main (int argc, char *argv[])
 
 		//setup functions
 		res = write_2_file(export_path, "49");
-		(res == -1) ? perror("Error exporting") :
-			printf("Exported our led: %s\n", export_path);
+		(res == -1) ? logger ( msg_err ("Error exporting", errno)) :
+			logger ( msg_app_str ("Exported our led: %s", export_path));
 		res = write_2_file(direction_path, "out");
-		(res == -1) ? perror("Error setting direction") :
-			printf("Set direction: %s\n", direction_path);
+		(res == -1) ? logger ( msg_err ("Error setting direction", errno)) :
+			logger ( msg_app_str ("Set direction: %s", direction_path));
 
 		while(1)
 		{
 			ft = fopen(ain1_path, "r");
 			if (ft == NULL)
 			{
-				perror("Error opening file");
+				logger ( msg_err("Error opening file", errno));
 				return -1;
 			}
 
@@ -211,15 +190,22 @@ int main (int argc, char *argv[])
 			{
 				raw = atoi(value);
 				temp = ((raw * 1800) - 500) / 10;
-				printf("\rRaw: %f, processed: %f", raw, temp);
-				fflush(stdout);
+				if (is_silent)
+				{
+					logger (msg_app_flt_flt ("Raw: %f, processed: %f", raw, temp));
+				}
+				else
+				{
+					printf("\rRaw: %f, processed: %f", raw, temp);
+					fflush(stdout);
+				}
 				//temp fix: if raw > 1780 then switch on led
 				if (raw > 1780)
 				{
 					if (!lock)
 					{
 						res = write_2_file(value_path,"1");
-						if (res == -1) perror("Error");
+						if (res == -1) logger (msg_err ("Error", errno));
 						lock=!lock;
 					}
 				}
@@ -228,7 +214,7 @@ int main (int argc, char *argv[])
 					if (lock)
 					{
 						res = write_2_file(value_path,"0");
-						if (res == -1) perror("Error");
+						if (res == -1) logger (msg_err ("Error", errno));
 						lock=!lock;
 					}
 				}

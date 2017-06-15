@@ -33,6 +33,7 @@ void logger(const char* msg)
 	char *c_time_string;
 	current_time = time(NULL);
 	c_time_string = ctime(&current_time);
+	c_time_string[strlen(c_time_string)-1] = 0;
 	strcat(buffer, c_time_string);
 	strcat(buffer, "] ");
 	strcat(buffer, msg);
