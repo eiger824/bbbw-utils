@@ -14,6 +14,7 @@
 #include <linux/device.h>
 #include <linux/kernel.h>
 #include <linux/gpio.h>
+#include <linux/random.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
 //#include "gpio-utils.h"
@@ -124,7 +125,10 @@ static int dev_open(struct inode *inodep, struct file *filep)
 static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
 {
 	int err = 0;
-	sprintf(cmd_out, "25");
+	int tmpval, tmp;
+	get_random_bytes(&tmpval, sizeof(tmpval));
+	tmp = tmpval % 5 + 20;
+	sprintf(cmd_out, "%d", tmp);
 	printk(KERN_INFO "TMP36: received temperature read request. Returning random: [%s]\n", cmd_out);
 	size_out = strlen(cmd_out);
 	// copy_to_user has the format ( * to, *from, size) and returns 0 on success

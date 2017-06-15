@@ -1,29 +1,52 @@
 #include <stdio.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <time.h>
+
+int fd; // file descriptor
+
+void sig_handler(int signo)
+{
+	if (signo == SIGINT)
+	{
+		if (fd < 0) return;
+		printf("\nSIGINT received, closing file\n");
+		close(fd);
+		exit(0);
+	}
+}
 
 int main(int argc, char* argv[])
 {
-	int fd = open("/dev/tmp36", O_RDWR);
+	fd = open("/dev/tmp36", O_RDWR);
 	char buffer[100];	
 	int ret;
 
-	if ( fd >= 0)
+	if (signal(SIGINT, sig_handler) == SIG_ERR)
 	{
-		printf("File opened, requesting read\n");
-		if ( (ret = read (fd, buffer, 2)) < 0 )
+		fprintf(stderr, "Could not catch signal\n");
+	}
+
+	while (1)
+	{
+		if ( fd >= 0)
 		{
-			perror("Error reading");
+			if ( (ret = read (fd, buffer, 2)) < 0 )
+			{
+				perror("Error reading");
+			}
+			else
+			{
+				buffer[2] = 0;
+				printf("Obtained sample: %s\n", buffer);
+			}
 		}
 		else
 		{
-			buffer[2] = 0;
-			printf("Obtained sample: %s\n", buffer);
+			perror("Error opening file");
 		}
-		close(fd);
-	}
-	else
-	{
-		perror("Error opening file");
+		sleep(1);
 	}
 	return 0;
 }
