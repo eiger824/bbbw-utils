@@ -20,6 +20,7 @@ const char* value_path = "/sys/class/gpio/gpio49/value";
 const char* unexport_path = "/sys/class/gpio/unexport";
 
 bool listen = false; // if the program will be interactive or not
+static unsigned int sample_count = 0; // read count
 
 void sig_handler(int signo)
 {
@@ -149,8 +150,7 @@ int main (int argc, char *argv[])
 				if (!strcmp(c,"1")) memset(c,'0',1);
 				else memset(c,'1',1);
 				write_2_file(value_path, c);
-				(res == -1) ? logger ( msg_err ("Error writing value", errno)) :
-					logger ( msg_app_str ("Success! (%s)", (!strcmp(c,"1")) ? "ON" : "OFF"));
+				if (res == -1) logger ( msg_err ("Error writing value", errno));
 				usleep(time * 1000);
 			}
 		}
@@ -164,7 +164,6 @@ int main (int argc, char *argv[])
 	else // Read temperature values
 	{
 		char value[10];
-		float temp;
 		float raw;
 		bool lock = false;
 		int res;
@@ -189,14 +188,13 @@ int main (int argc, char *argv[])
 			if ( fgets(value, 10, ft) != NULL )
 			{
 				raw = atoi(value);
-				temp = ((raw * 1800) - 500) / 10;
 				if (is_silent)
 				{
-					logger (msg_app_flt_flt ("Raw: %f, processed: %f", raw, temp));
+					logger (msg_app_flt_flt ("Raw: %f, sample count: %d", raw, sample_count));
 				}
 				else
 				{
-					printf("\rRaw: %f, processed: %f", raw, temp);
+					printf("\rRaw: %f, sample count: %d", raw, sample_count);
 					fflush(stdout);
 				}
 				//temp fix: if raw > 1780 then switch on led
@@ -218,6 +216,7 @@ int main (int argc, char *argv[])
 						lock=!lock;
 					}
 				}
+				++sample_count;
 				fclose(ft);
 			}
 			usleep(1000000);

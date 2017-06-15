@@ -16,6 +16,8 @@
 #include <linux/gpio.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
+#include "gpio-utils.h"
+
 #define  DEVICE_NAME "tmp36" //device under /dev
 #define  CLASS_NAME  "tmp36sensor"
 
