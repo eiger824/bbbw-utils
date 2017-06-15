@@ -16,7 +16,7 @@
 #include <linux/gpio.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
-#include "gpio-utils.h"
+//#include "gpio-utils.h"
 
 #define  DEVICE_NAME "tmp36" //device under /dev
 #define  CLASS_NAME  "tmp36sensor"
@@ -124,7 +124,9 @@ static int dev_open(struct inode *inodep, struct file *filep)
 static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
 {
 	int err = 0;
-	printk(KERN_INFO "TMP36: received temperature read request\n");
+	sprintf(cmd_out, "25");
+	printk(KERN_INFO "TMP36: received temperature read request. Returning random: [%s]\n", cmd_out);
+	size_out = strlen(cmd_out);
 	// copy_to_user has the format ( * to, *from, size) and returns 0 on success
 	err = copy_to_user(buffer, cmd_out, size_out);
 
