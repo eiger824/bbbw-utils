@@ -7,6 +7,7 @@
 
 #include <linux/init.h>
 #include <linux/module.h>
+#include <linux/device.h>
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <linux/gpio.h>
@@ -14,7 +15,7 @@
 #include <asm/uaccess.h>
 
 #define DEVICE_NAME "gled01"
-#define CLASS_NAME "bbbw_gled"
+#define CLASS_NAME "bbbw-gled"
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Santiago Pagola");
@@ -22,6 +23,7 @@ MODULE_DESCRIPTION("A Button/LED test driver for the BBB");
 MODULE_VERSION("0.1");
 
 static int major_number;
+static char message[2] = {0};
 static struct class* gled01Class = NULL;
 static struct device* gled01Dev = NULL;
 static unsigned int gpio_led = 49;// Led to use, on P9_23
@@ -151,11 +153,15 @@ static int dev_release(struct inode *inodep, struct file *filep)
 static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, loff_t *offset)
 {
 	//Some data was written from user space
-	if (!strcmp(buffer,"0"))
+	printk(KERN_INFO "Received buffer size: %d\n", len);
+	int err = 0;
+	err = copy_from_user(message, buffer, len);
+	printk(KERN_INFO "Received led status is: [%s]\n", message);
+	if (!strcmp(message,"0"))
 	{
 		gpio_set_value(gpio_led, false);
 	}
-	else if (!strcmp(buffer, "1"))
+	else if (!strcmp(message, "1"))
 	{
 		gpio_set_value(gpio_led, true);
 	}
@@ -165,6 +171,7 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 	}
 	++req_cnt;
 	printk(KERN_INFO "Request number: %d\n", req_cnt);
+	//Reset message
 	return len;
 }
 
@@ -181,7 +188,7 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs){
 	ledOn = !ledOn;                          // Invert the LED state on each button press
 	gpio_set_value(gpio_led, ledOn);          // Set the physical LED accordingly
-	printk(KERN_INFO "GLED01: Interrupt! (button state is %d)\n", gpio_get_value(gpio_btn));
+	printk(KERN_INFO "GLED01: Interrupt! (button state is %d)\n", ledOn);
 	press_cnt++;                         // Global counter, will be outputted when the module is unloaded
 	return (irq_handler_t) IRQ_HANDLED;      // Announce that the IRQ has been handled correctly
 }
