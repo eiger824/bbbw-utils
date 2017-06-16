@@ -171,8 +171,9 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 		printk(KERN_INFO "Unknown stream received: %s\n", buffer);
 	}
 	++req_cnt;
+	//Switch led state
+	ledOn = !ledOn;
 	printk(KERN_INFO "Request number: %d\n", req_cnt);
-	//Reset message
 	return len;
 }
 
