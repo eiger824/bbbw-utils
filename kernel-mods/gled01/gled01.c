@@ -156,6 +156,7 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 	printk(KERN_INFO "Received buffer size: %d\n", len);
 	int err = 0;
 	err = copy_from_user(message, buffer, len);
+	message[len] = 0;
 	printk(KERN_INFO "Received led status is: [%s]\n", message);
 	if (!strcmp(message,"0"))
 	{
