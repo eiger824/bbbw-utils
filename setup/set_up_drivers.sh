@@ -39,4 +39,4 @@ else
 fi
 
 echo "done"
-
+exit $?
