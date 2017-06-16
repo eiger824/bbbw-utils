@@ -42,6 +42,7 @@ void help()
 	printf("-0\tToggle led OFF and exit\n");
 	printf("-h\tShow this help and exit\n");
 	printf("-l\t\"Listen\" mode, non-interactive\n");
+	printf("-r\tRemove log file and exit\n");
 	printf("-t <m>\tToggle led state every m milliseconds\n");
 	printf("-s\tSilent mode (e.g. if running as daemon, logging to file)\n");
 }
@@ -66,7 +67,7 @@ int main (int argc, char *argv[])
 		return -1;
 	}
 
-	while ((opt = getopt(argc, argv, "01hlst:")) != -1)
+	while ((opt = getopt(argc, argv, "01hlrst:")) != -1)
 	{
 		switch(opt)
 		{
@@ -83,6 +84,10 @@ int main (int argc, char *argv[])
 				listen=true;
 				logger ("Will listen to AIN1 Pin (P9_40)"); 
 				break;
+			case 'r':
+				logger ("Will remove log file. Hasta la vista!");
+				remove_log_file();
+				return 0;
 			case 's':
 				set_silent(true);
 				is_silent = true;

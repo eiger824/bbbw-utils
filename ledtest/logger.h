@@ -1,9 +1,10 @@
 #ifndef BBBW_LOGGER_H_
 #define BBBW_LOGGER_H_
 
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "strutils.h"
-#include "errno.h"
-#include "fcntl.h"
 
 #define GLED01_DEV "/dev/gled01"
 
@@ -16,14 +17,12 @@ const char* log_path = "/var/log/ledaemon.log";
 
 bool silent = false;
 
-int write_2_file(const char* name, const char* value)
-{
-	fd = fopen(name, "w");
-	if (fd == NULL) return -1;
-	fputs(value, fd);
-	fclose(fd);
-	return 0;
-}
+int write_2_led(const char* value);
+void remove_log_file();
+void set_silent(bool s);
+void logger(const char* msg);
+int read_from_file(const char* name, char* buffer);
+
 
 int write_2_led(const char* value)
 {
@@ -34,6 +33,12 @@ int write_2_led(const char* value)
 	close(fled);
 	if (ret < 0) return errno; 
 	return 0;
+}
+
+void remove_log_file()
+{
+	if (!unlink(log_path)) logger ("Success!");
+	else logger (msg_err("Error", errno) );
 }
 
 void set_silent(bool s)
