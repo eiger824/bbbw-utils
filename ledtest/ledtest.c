@@ -14,10 +14,6 @@
 
 // File to use in sysfs
 const char* ain1_path = "/sys/bus/iio/devices/iio:device0/in_voltage1_raw";
-const char* export_path = "/sys/class/gpio/export";
-const char* direction_path = "/sys/class/gpio/gpio49/direction";
-const char* value_path = "/sys/class/gpio/gpio49/value";
-const char* unexport_path = "/sys/class/gpio/unexport";
 
 bool listen = false; // if the program will be interactive or not
 static unsigned int sample_count = 0; // read count
@@ -26,24 +22,11 @@ void sig_handler(int signo)
 {
 	if (signo == SIGINT)
 	{
-		if (!listen)
-		{
-			logger ("\nReceived SIGINT, switching off led and unexporting");
-			int res;
-
-			res = write_2_file(value_path,"0");
-			(res == -1) ? logger (msg_err ("Error writing value", errno)) : 
-				logger ("Success! Led is OFF");
-
-			res = write_2_file(unexport_path, "49");
-			(res == -1) ? logger (msg_err ("Error unexporting led", errno)) :
-				logger ("Success! Led 49 is unregistered");
-		}
-		else
-		{
-			printf("\n");
-		}
-		//exit program
+		logger ("\nReceived SIGINT");
+		/* No need to implement anything right now, but 
+		*  but if something was needed, here would come
+		*  the code.
+		*/
 		exit(0);
 	}
 }
@@ -135,28 +118,20 @@ int main (int argc, char *argv[])
 
 	if (!listen)
 	{
-		//setup functions
-		res = write_2_file(export_path, "49");
-		(res == -1) ? logger (msg_err ("Error exporting", errno)) :
-			logger (msg_app_str("Exported our led: %s", export_path));
-		res = write_2_file(direction_path, "out");
-		(res == -1) ? logger ( msg_err ("Error setting direction", errno)) :
-			logger ( msg_app_str ("Set direction: %s", direction_path));
-
 		if (toggle)
 		{
 			while(1)
 			{
 				if (!strcmp(c,"1")) memset(c,'0',1);
 				else memset(c,'1',1);
-				write_2_file(value_path, c);
+				res = write_2_led(c);
 				if (res == -1) logger ( msg_err ("Error writing value", errno));
 				usleep(time * 1000);
 			}
 		}
 		else
 		{
-			write_2_file(value_path, c);
+			res = write_2_led(c);
 			(res == -1) ? logger ( msg_err ("Error writing value", errno)) :
 				logger ( msg_app_str("Success! (%s)", (!strcmp(c,"1")) ? "ON" : "OFF"));
 		}	
@@ -168,15 +143,7 @@ int main (int argc, char *argv[])
 		float temp;
 		bool lock = false;
 		int res;
-
-		//setup functions
-		res = write_2_file(export_path, "49");
-		(res == -1) ? logger ( msg_err ("Error exporting", errno)) :
-			logger ( msg_app_str ("Exported our led: %s", export_path));
-		res = write_2_file(direction_path, "out");
-		(res == -1) ? logger ( msg_err ("Error setting direction", errno)) :
-			logger ( msg_app_str ("Set direction: %s", direction_path));
-
+		
 		while(1)
 		{
 			ft = fopen(ain1_path, "r");
@@ -203,7 +170,7 @@ int main (int argc, char *argv[])
 				{
 					if (!lock)
 					{
-						res = write_2_file(value_path,"1");
+						res = write_2_led("1");
 						if (res == -1) logger (msg_err ("Error", errno));
 						lock=!lock;
 					}
@@ -212,7 +179,7 @@ int main (int argc, char *argv[])
 				{
 					if (lock)
 					{
-						res = write_2_file(value_path,"0");
+						res = write_2_led("0");
 						if (res == -1) logger (msg_err ("Error", errno));
 						lock=!lock;
 					}

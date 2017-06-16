@@ -2,10 +2,15 @@
 #define BBBW_LOGGER_H_
 
 #include "strutils.h"
+#include "errno.h"
+#include "fcntl.h"
+
+#define GLED01_DEV "/dev/gled01"
 
 FILE *ft; // File descriptor used for reading from P9_40
-FILE *fd; // File descriptor used for interacting with the led
+FILE *fd; // File descriptor used for backup 
 FILE *fl; // File descriptor used for the log file
+int fled; // File descriptor used for interacting with the led
 
 const char* log_path = "/var/log/ledaemon.log";
 
@@ -17,6 +22,17 @@ int write_2_file(const char* name, const char* value)
 	if (fd == NULL) return -1;
 	fputs(value, fd);
 	fclose(fd);
+	return 0;
+}
+
+int write_2_led(const char* value)
+{
+	int ret;
+	fled = open(GLED01_DEV, O_RDWR);
+	if (fd < 0) return -1;
+	ret = write(fled, value, 1);
+	close(fled);
+	if (ret < 0) return errno; 
 	return 0;
 }
 

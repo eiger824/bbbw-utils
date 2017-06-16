@@ -2,7 +2,7 @@
 *.cmd
 test
 tmp36_test
-test_gled01
+toggle_gled01
 *.o
 *.ko
 Module.symvers
