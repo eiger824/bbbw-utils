@@ -3,7 +3,7 @@ Description=Temperature sensor that triggers a led if T>25C
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c "/home/debian/set_up_drivers.sh && /home/debian/ledtest/test_gled01_tmp36 -sl"
+ExecStart=/bin/sh -c "/home/debian/set_up_drivers.sh && /home/debian/bbbw-utils/ledtest/test_gled01_tmp36 -sl"
 
 [Install]
 WantedBy=multi-user.target
