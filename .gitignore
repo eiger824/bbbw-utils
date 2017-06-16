@@ -1,7 +1,8 @@
 *swp*
 *.cmd
-tmp36_test
+test_tmp36
 toggle_gled01
+test_gled01_tmp36
 *.o
 *.ko
 Module.symvers

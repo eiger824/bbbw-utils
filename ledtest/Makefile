@@ -1,8 +1,9 @@
-all: test
+all: test_gled01_tmp36
 
-test: ledtest.c logger.h strutils.h
-	gcc ledtest.c -o test
+test_gled01_tmp36: main.c logger.h strutils.h
+	gcc main.c -o test_gled01_tmp36
 
 clean:
-	rm -rf test
+	rm -rf test_gled01_tmp36
+
 
