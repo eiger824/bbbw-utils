@@ -197,18 +197,18 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 	if (message[0] == '0')
 	{
 		gpio_set_value(gpio_led, false);
+		ledOn = false;
 	}
 	else if (message[0] == '1')
 	{
 		gpio_set_value(gpio_led, true);
+		ledOn = true;
 	}
 	else
 	{
 		printk(KERN_INFO "Unknown stream received: %s\n", buffer);
 	}
 	++req_cnt;
-	//Switch led state
-	ledOn = !ledOn;
 	printk(KERN_INFO "Request number: %d\n", req_cnt);
 	return len;
 }
