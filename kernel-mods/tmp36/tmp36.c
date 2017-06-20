@@ -39,11 +39,14 @@ static struct device* tmp36Device = NULL; // The device-driver device struct poi
 static int     dev_open(struct inode *, struct file *);
 static int     dev_release(struct inode *, struct file *);
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
+static ssize_t dev_write(struct file *, const char*, size_t, loff_t *);
+
 
 static struct file_operations fops =
 {
 	.open = dev_open,
 	.read = dev_read,
+	.write = dev_write,
 	.release = dev_release,
 };
 
@@ -90,7 +93,7 @@ static int __init tmp36_init(void)
 
 /** @function tmp36_exit
  *  @brief Cleanup function
-    Called on exit
+ Called on exit
  */
 static void __exit tmp36_exit(void)
 {
@@ -146,6 +149,20 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 	}
 }
 
+/** @function dev_write
+ *  @brief Dummy function to cover the case where data may have been written to this device
+ *  @param filep A pointer to the file object
+ *  @param buffer The data to write - not even going to be used!
+ *  @param len The length of the data to be written
+ *  @param offset The offset if required
+ */
+static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, loff_t *offset)
+{
+	//Some data was written from user space
+	printk(KERN_INFO "Received buffer size: %d (Did you attempt to write to a sensor?)\n", len);
+	return -EFAULT; //Always non-zero, should not write to this module!
+}
+
 /** @function dev_release
  *  @brief The device release function that is called whenever the device is closed/released by
  *  the userspace program
@@ -159,6 +176,6 @@ static int dev_release(struct inode *inodep, struct file *filep)
 }
 
 /** @brief Mandatory function calls 
- */
+*/
 module_init(tmp36_init);
 module_exit(tmp36_exit);
