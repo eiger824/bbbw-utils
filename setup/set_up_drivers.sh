@@ -38,5 +38,6 @@ else
 	echo "Compile gled01 module and run this script again"
 fi
 
+STATUS=$?
 echo "done"
-exit $?
+exit $STATUS
