@@ -17,7 +17,6 @@
 #include <linux/random.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
-//#include "gpio-utils.h"
 
 #define  DEVICE_NAME "tmp36" //device under /dev
 #define  CLASS_NAME  "tmp36sensor"
@@ -31,7 +30,6 @@ static int    majorNumber;
 static char   cmd_out[10] = {0}; // Value of temperature sent back to user space
 static size_t size_out; //Size of outcoming buffer
 static int    openCnt = 0; // Counts the number of times the temperature has been requested
-static unsigned int gpioADCP9_40 = 0;
 static struct class*  tmp36Class  = NULL; // The device-driver class struct pointer
 static struct device* tmp36Device = NULL; // The device-driver device struct pointer
 

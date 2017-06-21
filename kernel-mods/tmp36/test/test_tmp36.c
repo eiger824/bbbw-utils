@@ -10,9 +10,9 @@ void sig_handler(int signo)
 {
 	if (signo == SIGINT)
 	{
-		if (fd < 0) return;
 		printf("\nSIGINT received, closing file\n");
-		close(fd);
+		if (fd >= 0)
+			close(fd);
 		exit(0);
 	}
 }
