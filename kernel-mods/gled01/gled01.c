@@ -77,7 +77,6 @@ static int __init gled01_init(void){
 	//Button on P9_27
 	gpio_request(gpio_btn, "sysfs");
 	gpio_direction_input(gpio_btn);
-	gpio_set_debounce(gpio_btn, 200);
 	gpio_export(gpio_btn, false);  //Export P9_27
 
 	printk(KERN_INFO "GLED01: Button state: %d\n", gpio_get_value(gpio_btn));
