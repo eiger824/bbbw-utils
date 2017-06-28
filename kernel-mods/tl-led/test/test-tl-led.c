@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 				msg[2] = 0;
 
 				//Now open file
-				printf("Now opening /dev/tl-led, sendint STATE=%c to LED=%c ...\n", lednr, state);
+				printf("Now opening /dev/tl-led, sending STATE=%c to LED=%c ...\n", lednr, state);
 				int fd, ret;
 				fd = open("/dev/tl-led", O_RDWR);
 				if (fd < 0)
