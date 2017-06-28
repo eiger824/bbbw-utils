@@ -10,3 +10,4 @@ modules.order
 .tmp_versions
 *mod.c
 *.unsigned
+test-tl-led
