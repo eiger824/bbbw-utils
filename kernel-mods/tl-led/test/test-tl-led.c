@@ -4,11 +4,17 @@
 #include <errno.h>
 #include <fcntl.h>
 
+void help()
+{
+	fprintf(stderr, "USAGE: ./test-tl-led LEDNR:STATE, with LEDNR={0|1|2} and STATE={0|1}\n");
+}
+
 int main(int argc, char* argv[])
 {
 	if (argc == 1)
 	{
 		fprintf(stderr, "Not enough input args\n");
+		help();
 		return -1;
 	}
 
@@ -17,7 +23,7 @@ int main(int argc, char* argv[])
 	{
 		if (strlen(argv[1]) != 3)
 		{
-			fprintf(stderr, "Format: LEDNR:STATE, with LEDNR={0|1|2} and STATE={0|1}\n");
+			help();
 			free(arg1);
 			return -1;
 		}
@@ -30,14 +36,14 @@ int main(int argc, char* argv[])
 
 				if ('0' > lednr || lednr > '2')
 				{
-					fprintf(stderr, "Format: LEDNR:STATE, with LEDNR={0|1|2} and STATE={0|1}\n");
+					help();
 					free(arg1);
 					return -1;
 				}
 
 				if ('0' > state || state > '1')
 				{
-					fprintf(stderr, "Format: LEDNR:STATE, with LEDNR={0|1|2} and STATE={0|1}\n");
+					help();
 					free(arg1);
 					return -1;
 				}
@@ -71,7 +77,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				fprintf(stderr, "Format: LEDNR:STATE, with LEDNR={0|1|2} and STATE={0|1}\n");
+				help();
 				free(arg1);
 				return -1;
 			}
