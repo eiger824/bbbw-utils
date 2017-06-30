@@ -1,2 +1,2 @@
 # Rules file for the tmp36sensor driver
-KERNEL=="gled01", SUBSYSTEM=="bbbw-gled", MODE="0666"
+KERNEL=="gled01", SUBSYSTEM=="drvz", MODE="0666"

@@ -1,2 +1,2 @@
 # Rules file for the tmp36sensor driver
-KERNEL=="tl-led", SUBSYSTEM=="bbbw-tl-led", MODE="0666"
+KERNEL=="tl-led", SUBSYSTEM=="drvz", MODE="0666"

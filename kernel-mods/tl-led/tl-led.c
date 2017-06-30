@@ -15,7 +15,7 @@
 #include <asm/uaccess.h>
 
 #define DEVICE_NAME "tl-led"
-#define CLASS_NAME "bbbw-tl-led"
+#define CLASS_NAME "drvz"
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Santiago Pagola");

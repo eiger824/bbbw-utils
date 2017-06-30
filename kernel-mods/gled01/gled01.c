@@ -15,7 +15,7 @@
 #include <asm/uaccess.h>
 
 #define DEVICE_NAME "gled01"
-#define CLASS_NAME "bbbw-gled"
+#define CLASS_NAME "drvz"
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Santiago Pagola");
