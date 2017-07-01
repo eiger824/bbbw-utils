@@ -19,7 +19,7 @@
 #include <asm/uaccess.h>
 
 #define  DEVICE_NAME "tmp36" //device under /dev
-#define  CLASS_NAME  "drvz"
+#define  CLASS_NAME  "tmp36-drv"
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Santiago Pagola");
