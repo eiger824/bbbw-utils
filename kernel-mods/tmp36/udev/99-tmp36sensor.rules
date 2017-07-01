@@ -1,2 +1,2 @@
 # Rules file for the tmp36sensor driver
-KERNEL=="tmp36", SUBSYSTEM=="drvz", MODE="0666"
+KERNEL=="tmp36", SUBSYSTEM=="tmp36-drv", MODE="0666"
