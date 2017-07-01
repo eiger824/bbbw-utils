@@ -277,7 +277,22 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 	int err = 0;
 	err = copy_from_user(message, buffer, len);
 	message[len] = 0;
-	printk(KERN_INFO "Received buffer [%s], led status for led \"%c\" is: [%c]\n", message, message[1], message[0]);
+	if (len == 2)
+	{
+		printk(KERN_INFO "Received buffer [%s], led status for led \"%c\" is: [%c]\n", message, message[1], message[0]);
+	}
+	else
+	{
+		if (!strcmp(message, "all"))
+		{
+			printk(KERN_INFO "Will animate LEDs!\n");
+			animation();
+		}
+		else
+		{
+			printk(KERN_INFO "Invalid command received \"%s\", skipping...\n", message);
+		}
+	}
 	if (message[1] == '0')
 	{
 		if (message[0] == '0')
