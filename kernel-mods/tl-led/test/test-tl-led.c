@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 void help()
 {
@@ -13,9 +14,22 @@ int main(int argc, char* argv[])
 {
 	if (argc == 1)
 	{
-		fprintf(stderr, "Not enough input args\n");
-		help();
-		return -1;
+		int fd, ret;
+		fd = open("/dev/tl-led", O_RDWR);
+		if (fd < 0)
+		{
+			perror("Failed to open device");
+			return errno;
+		}
+		ret = write(fd, "all", 3);
+		if (ret < 0)
+		{
+			perror("Error writing to device");
+			close(fd);
+			return errno;
+		}
+		close(fd);
+		return 0;
 	}
 
 	char *arg1 = malloc(strlen(argv[1]));
@@ -73,6 +87,8 @@ int main(int argc, char* argv[])
 					close(fd);
 					return errno;
 				}
+				close(fd);
+				free(arg1);
 
 			}
 			else
