@@ -287,10 +287,12 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 		{
 			printk(KERN_INFO "Will animate LEDs!\n");
 			animation();
+			return len;
 		}
 		else
 		{
 			printk(KERN_INFO "Invalid command received \"%s\", skipping...\n", message);
+			return len;
 		}
 	}
 	if (message[1] == '0')
