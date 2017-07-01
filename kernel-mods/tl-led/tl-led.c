@@ -116,20 +116,41 @@ static void animation(void)
 		ledOn_1 = true;
 		ledOn_2 = true;
 		gpio_set_value(gpio_led0, ledOn_0);
-		msleep(100);
+		msleep(75);
 		gpio_set_value(gpio_led1, ledOn_1);
-		msleep(100);
+		msleep(75);
 		gpio_set_value(gpio_led2, ledOn_2);
+		msleep(75);
 		//Invert state
 		ledOn_0 = false;
 		ledOn_1 = false;
 		ledOn_2 = false;
 		gpio_set_value(gpio_led2, ledOn_2);
-		msleep(100);
+		msleep(75);
 		gpio_set_value(gpio_led1, ledOn_1);
-		msleep(100);
+		msleep(75);
 		gpio_set_value(gpio_led0, ledOn_0);
-		msleep(100);
+		msleep(75);
+	}
+	
+	//Last triple flash
+	for (i=0; i<3; ++i)
+	{
+		ledOn_0 = true;
+		ledOn_1 = true;
+		ledOn_2 = true;
+		gpio_set_value(gpio_led0, ledOn_0);
+		gpio_set_value(gpio_led1, ledOn_1);
+		gpio_set_value(gpio_led2, ledOn_2);
+		msleep(150);
+		ledOn_0 = false;
+		ledOn_1 = false;
+		ledOn_2 = false;
+		gpio_set_value(gpio_led0, ledOn_0);
+		gpio_set_value(gpio_led1, ledOn_1);
+		gpio_set_value(gpio_led2, ledOn_2);
+		msleep(150);
+		
 	}
 }
 
@@ -256,20 +277,20 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 	int err = 0;
 	err = copy_from_user(message, buffer, len);
 	message[len] = 0;
-	printk(KERN_INFO "Received led status for led \"%c\" is: [%c]\n", message[1], message[0]);
-	if (message[0] == '0')
+	printk(KERN_INFO "Received buffer [%s], led status for led \"%c\" is: [%c]\n", message, message[1], message[0]);
+	if (message[1] == '0')
 	{
-		if (message[1] == '0')
+		if (message[0] == '0')
 		{
 			gpio_set_value(gpio_led0, false);
 			ledOn_0 = false;
 		}
-		else if (message[1] == '1')
+		else if (message[0] == '1')
 		{
 			gpio_set_value(gpio_led1, false);
 			ledOn_1 = false;
 		}
-		else if (message[1] == '2')
+		else if (message[0] == '2')
 		{
 			gpio_set_value(gpio_led2, false);
 			ledOn_2 = false;
@@ -279,19 +300,19 @@ static ssize_t dev_write(struct file *filep, const char* buffer, size_t len, lof
 			printk(KERN_INFO "Unknown LED-ID received: %c\n", message[1]);
 		}
 	}
-	else if (message[0] == '1')
+	else if (message[1] == '1')
 	{
-		if (message[1] == '0')
+		if (message[0] == '0')
 		{
 			gpio_set_value(gpio_led0, true);
 			ledOn_0 = true;
 		}
-		else if (message[1] == '1')
+		else if (message[0] == '1')
 		{
 			gpio_set_value(gpio_led1, true);
 			ledOn_1 = true;
 		}
-		else if (message[1] == '2')
+		else if (message[0] == '2')
 		{
 			gpio_set_value(gpio_led2, true);
 			ledOn_2 = true;
