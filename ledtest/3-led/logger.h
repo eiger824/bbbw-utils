@@ -76,6 +76,7 @@ void logger(const char* msg)
 			fputs(buffer, fl);
 			fclose(fl);
 		}
+		else printf("Could not open\n");
 	}
 }
 

@@ -124,7 +124,6 @@ int main (int argc, char *argv[])
 				break;
 		}
 	}	
-
 	//Privileges needed to access GPIO in sysfs
 	if (getuid() != 0)
 	{
@@ -142,53 +141,54 @@ int main (int argc, char *argv[])
 		if (ft == NULL)
 		{
 			logger ( msg_err("Error opening file", errno));
-			return -1;
 		}
-
-		if ( fgets(value, 10, ft) != NULL )
+		else
 		{
-			raw = atoi(value);
-			temp = (((raw / 4096) * 1800) - 500)/10;
-			if (is_silent)
+			if ( fgets(value, 10, ft) != NULL )
 			{
-				logger (msg_app_flt3 ("Raw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count));
-			}
-			else
-			{
-				printf("\rRaw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count);
-				fflush(stdout);
-			}
-			/*
-			   Temp. ranges: <10: RED
-			   10<=t<15: ORANGE
-			   15<=t<20: GREEN
-			   20<=t<25: ORANGE
-			   >25: RED
-			 */
+				raw = atoi(value);
+				temp = (((raw / 4096) * 1800) - 500)/10;
+				if (is_silent)
+				{
+					logger (msg_app_flt3 ("Raw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count));
+				}
+				else
+				{
+					printf("\rRaw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count);
+					fflush(stdout);
+				}
+				/*
+				   Temp. ranges: <10: RED
+				   10<=t<15: ORANGE
+				   15<=t<20: GREEN
+				   20<=t<25: ORANGE
+				   >25: RED
+				 */
 
-			if (temp < 10)
-			{
-				set_state(0);
-			}
-			else if (10 <= temp && temp < 15)
-			{
-				set_state(1);
-			}
-			else if (15 <= temp && temp < 20)
-			{
-				set_state(2);
-			}
-			else if (20 <= temp && temp < 25)
-			{
-				set_state(1);
-			}
-			else
-			{
-				set_state(0);
-			}
+				if (temp < 10)
+				{
+					set_state(0);
+				}
+				else if (10 <= temp && temp < 15)
+				{
+					set_state(1);
+				}
+				else if (15 <= temp && temp < 20)
+				{
+					set_state(2);
+				}
+				else if (20 <= temp && temp < 25)
+				{
+					set_state(1);
+				}
+				else
+				{
+					set_state(0);
+				}
 
-			++sample_count;
-			fclose(ft);
+				++sample_count;
+				fclose(ft);
+			}
 		}
 		usleep(10 * 1000000);
 	}
