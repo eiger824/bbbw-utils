@@ -37,12 +37,8 @@ void help()
 	printf("USAGE:\nledtest [OPTIONS]\n");
 	printf("OPTIONS:\n");
 
-	printf("-1\tToggle led ON and exit\n");
-	printf("-0\tToggle led OFF and exit\n");
 	printf("-h\tShow this help and exit\n");
-	printf("-l\t\"Listen\" mode, non-interactive\n");
 	printf("-r\tRemove log file and exit\n");
-	printf("-t <m>\tToggle led state every m milliseconds\n");
 	printf("-s\tSilent mode (e.g. if running as daemon, logging to file)\n");
 }
 

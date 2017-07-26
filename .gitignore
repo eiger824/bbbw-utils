@@ -3,6 +3,7 @@
 test_tmp36
 toggle_gled01
 test_gled01_tmp36
+test_tl-led_tmp36
 *.o
 *.ko
 Module.symvers
