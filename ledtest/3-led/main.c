@@ -15,7 +15,7 @@
 // File to use in sysfs
 const char* ain1_path = "/sys/bus/iio/devices/iio:device0/in_voltage1_raw";
 
-static unsigned int sample_count = 0; // read count
+unsigned int sample_count = 0; // read count
 
 void sig_handler(int signo)
 {
@@ -90,12 +90,6 @@ int main (int argc, char *argv[])
 		logger ("Warning, SIGINT won't be catched");
 	}
 
-	if (argc == 1)
-	{
-		help();
-		return -1;
-	}
-
 	while ((opt = getopt(argc, argv, "hrs")) != -1)
 	{
 		switch(opt)
@@ -150,7 +144,11 @@ int main (int argc, char *argv[])
 				temp = (((raw / 4096) * 1800) - 500)/10;
 				if (is_silent)
 				{
-					logger (msg_app_flt3 ("Raw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count));
+					//log every hour
+					if (sample_count % 360 == 0)
+					{
+						logger (msg_app_flt3 ("Raw: %f, Temp(C): %f, Sample count: %d", raw, temp, sample_count));
+					}
 				}
 				else
 				{
