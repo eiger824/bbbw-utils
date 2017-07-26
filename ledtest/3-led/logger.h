@@ -17,14 +17,14 @@ const char* log_path = "/var/log/ledaemon.log";
 
 bool silent = false;
 
-int write_2_led(const char* lednr, const char* value);
+int write_2_led(char lednr, char value);
 void remove_log_file();
 void set_silent(bool s);
 void logger(const char* msg);
 int read_from_file(const char* name, char* buffer);
 
 
-int write_2_led(const char* lednr, const char* value)
+int write_2_led(char lednr, char value)
 {
 	int ret;
 	char pair[3];

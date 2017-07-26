@@ -48,27 +48,27 @@ void set_state(unsigned s)
 	switch(s)
 	{
 		case 0:
-			ret = write_2_led("0","1");
+			ret = write_2_led('0','1');
 			if (ret == -1) logger (msg_err ("Error", errno));
-			ret = write_2_led("1","0");
+			ret = write_2_led('1','0');
 			if (ret == -1) logger (msg_err ("Error", errno));
-			ret = write_2_led("2","0");
+			ret = write_2_led('2','0');
 			if (ret == -1) logger (msg_err ("Error", errno));
 			break;
 		case 1:
-			ret = write_2_led("0","0");
+			ret = write_2_led('0','0');
 			if (ret == -1) logger (msg_err ("Error", errno));
-			ret = write_2_led("1","1");
+			ret = write_2_led('1','1');
 			if (ret == -1) logger (msg_err ("Error", errno));
-			ret = write_2_led("2","0");
+			ret = write_2_led('2','0');
 			if (ret == -1) logger (msg_err ("Error", errno));
 			break;
 		case 2:
-			ret = write_2_led("0","0");
+			ret = write_2_led('0','0');
 			if (ret == -1) logger (msg_err ("Error", errno));
-			ret = write_2_led("1","0");
+			ret = write_2_led('1','0');
 			if (ret == -1) logger (msg_err ("Error", errno));
-			ret = write_2_led("2","1");
+			ret = write_2_led('2','1');
 			if (ret == -1) logger (msg_err ("Error", errno));
 			break;
 		default:
