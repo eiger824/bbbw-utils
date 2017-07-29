@@ -29,7 +29,7 @@ then
 fi
 
 # And run the program
-ps ax | grep -q test_tl-led_tmp36 | head -1
+ps ax | grep -q test_tl-led_tmp36 | head -1 | grep -v grep
 if [ $? -ne 0 ]
 then
 	/home/debian/bbbw-utils/ledtest/3-led/test_tl-led_tmp36 -s &

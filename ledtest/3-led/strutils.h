@@ -41,7 +41,7 @@ char* msg_app_flt_flt(const char* msg1, float n1, float n2)
 	return p;
 }
 
-char* msg_app_flt3(const char* msg1, float n1, float n2, float n3)
+char* msg_app_flt3(const char* msg1, float n1, float n2, unsigned n3)
 {
 	char* p = malloc(200);
 	int b = sprintf(p, msg1, n1, n2, n3);
