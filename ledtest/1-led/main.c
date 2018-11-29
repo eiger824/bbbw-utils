@@ -8,9 +8,12 @@
 #include <ctype.h>
 #include <time.h>
 #include <errno.h>
+#include <getopt.h>
 
 #include "logger.h"
 #include "strutils.h"
+
+#define _DEFAULT_SOURCE
 
 // File to use in sysfs
 const char* ain1_path = "/sys/bus/iio/devices/iio:device0/in_voltage1_raw";
